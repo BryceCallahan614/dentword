@@ -1,0 +1,51 @@
+spine	棘
+mylohyoid ridge	下颌舌骨肌嵴
+genioglossus muscle	颏舌肌
+buccinator muscle	颊肌
+coronoid process	喙突
+photon	光子
+cervical burnout	颈部烧蚀影
+anterolateral	前外侧的
+nasopalatine	鼻腭的
+homogeneous	均质的
+mental ridge	颏嵴
+oblique ridge	斜嵴
+geniohyoid muscle	颏舌骨肌
+pterygoid plate	翼板
+symphysis	联合
+pyramid	锥体
+posterolateral	后外侧的
+hyperostotic	骨质增生的
+hamular	翼钩的
+interpatient	患者间的
+histologic status	组织学状态
+attachment apparatus	附着装置
+lamina dura	硬骨板
+dental tubules	牙本质小管
+periodontal ligament	牙周膜
+intraligamentary	韧带内的
+distal sulcus	远中沟
+cancellous bone	松质骨
+cortical bone	皮质骨
+apical foramen	根尖孔
+cortical plate	骨皮质板
+offending tooth	患牙
+clastic cells	破骨细胞
+sinus tract	窦道
+immature apices	未成熟根尖
+reversible pulpitis	可复性牙髓炎
+hyperplastic pulpitis	增生性牙髓炎
+internal resorption	内吸收
+periapical diseases	根尖周疾病
+acute periradicular abscess	急性根周脓肿
+acute apical periodontitis	急性根尖周炎
+lateral periodontal abscess	侧方牙周脓肿
+periapical osteosclerosis	根尖周骨硬化
+bacterial toxin	细菌毒素
+spontaneous pain	自发痛
+localized pain	局限性疼痛
+referred pain	牵涉痛
+radiating pain	放射痛
+root planning	根面平整术
+pulp capping	盖髓术
+coronal discoloration	牙冠变色
