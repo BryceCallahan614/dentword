@@ -92,6 +92,11 @@
         .btn-danger:hover {
             background: rgba(239, 68, 68, 0.3);
         }
+        
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
 
         /* 输入框样式 */
         .input {
@@ -466,6 +471,137 @@
             font-size: 14px;
         }
 
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+        
+        .stat-item {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .stat-item-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 4px;
+        }
+        
+        .stat-item-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* 管理页面 */
+        .manage-page {
+            max-width: 900px;
+            padding: 20px;
+            align-items: flex-start;
+            justify-content: flex-start;
+            padding-top: 60px;
+        }
+        
+        .manage-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .manage-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .manage-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .word-table-container {
+            width: 100%;
+            max-height: 70vh;
+            overflow-y: auto;
+            border-radius: 16px;
+        }
+        
+        .word-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .word-table th,
+        .word-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .word-table th {
+            background: rgba(102, 126, 234, 0.2);
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .word-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .word-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .checkbox-cell {
+            width: 40px;
+            text-align: center;
+        }
+        
+        .checkbox-cell input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .status-learned {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+        
+        .status-unlearned {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
         /* 响应式调整 */
         @media (max-width: 480px) {
             .home-title {
@@ -528,6 +664,22 @@
             </div>
         </div>
 
+        <!-- 统计信息 -->
+        <div class="section glass-container" id="statsSection" style="display: none;">
+            <h2 class="section-title">📈 学习统计</h2>
+            <div class="stats-grid" id="homeStatsGrid">
+            </div>
+        </div>
+
+        <!-- 学习模式 -->
+        <div class="section glass-container" id="modeSection" style="display: none;">
+            <h2 class="section-title">🎯 学习模式</h2>
+            <div class="btn-group">
+                <button class="btn active" data-mode="cn2en">中文 → 英文</button>
+                <button class="btn" data-mode="en2cn">英文 → 中文</button>
+            </div>
+        </div>
+
         <!-- 学习顺序 -->
         <div class="section glass-container" id="settingsSection" style="display: none;">
             <h2 class="section-title">🔄 学习顺序</h2>
@@ -548,8 +700,11 @@
             </div>
         </div>
 
-        <!-- 开始按钮 -->
+        <!-- 管理按钮和开始按钮 -->
         <div id="startSection" style="display: none; width: 100%;">
+            <div class="btn-group" style="margin-bottom: 16px;">
+                <button class="btn" id="manageBtn">管理单词</button>
+            </div>
             <button class="btn btn-primary start-btn" id="startBtn">开始学习 🚀</button>
         </div>
     </div>
@@ -604,14 +759,18 @@
                     <tr>
                         <th>英文</th>
                         <th>中文</th>
-                        <th>输错次数</th>
+                        <th>本次错误</th>
+                        <th>累计错误</th>
                     </tr>
                 </thead>
                 <tbody id="errorTableBody"></tbody>
             </table>
         </div>
 
-        <button class="btn btn-primary start-btn" id="backHomeBtn">返回首页</button>
+        <div class="btn-group">
+            <button class="btn" id="exportBtn">导出学习记录</button>
+            <button class="btn btn-primary" id="backHomeBtn">返回首页</button>
+        </div>
     </div>
 
     <!-- 错误弹窗 -->
@@ -634,6 +793,32 @@
                 <button class="btn" id="allCompleteNo">继续复习</button>
                 <button class="btn btn-primary" id="allCompleteYes">重新开始</button>
             </div>
+        </div>
+    </div>
+
+    <!-- 管理页面 -->
+    <div id="managePage" class="page manage-page">
+        <div class="manage-header">
+            <h1 class="manage-title">📋 单词管理</h1>
+            <div class="manage-actions">
+                <button class="btn btn-danger btn-small" id="resetAllBtn">全部设为未学习</button>
+                <button class="btn btn-small" id="manageBackBtn">返回首页</button>
+            </div>
+        </div>
+        
+        <div class="section glass-container word-table-container">
+            <table class="word-table" id="wordTable">
+                <thead>
+                    <tr>
+                        <th class="checkbox-cell">启用</th>
+                        <th>英文</th>
+                        <th>中文</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="wordTableBody"></tbody>
+            </table>
         </div>
     </div>
 
@@ -695,6 +880,9 @@
                 this.KEY_WORDS = 'wordlist';
                 this.KEY_LEARNED = 'learnedWords';
                 this.KEY_FILE_NAME = 'fileName';
+                this.KEY_WORD_STATS = 'wordStats';
+                this.KEY_ENABLED_WORDS = 'enabledWords';
+                this.KEY_LEARNING_MODE = 'learningMode';
             }
 
             /**
@@ -703,6 +891,12 @@
              */
             saveWords(words) {
                 localStorage.setItem(this.KEY_WORDS, JSON.stringify(words));
+                // 初始化启用状态
+                const enabled = {};
+                words.forEach(word => {
+                    enabled[word.english] = true;
+                });
+                this.saveEnabledWords(enabled);
             }
 
             /**
@@ -720,6 +914,15 @@
              */
             saveLearned(learned) {
                 localStorage.setItem(this.KEY_LEARNED, JSON.stringify(learned));
+                // 同时更新wordStats中的learned状态
+                const stats = this.getWordStats();
+                Object.keys(learned).forEach(key => {
+                    if (!stats[key]) {
+                        stats[key] = { correct: 0, wrong: 0, learned: false };
+                    }
+                    stats[key].learned = learned[key];
+                });
+                this.saveWordStats(stats);
             }
 
             /**
@@ -732,12 +935,64 @@
             }
 
             /**
+             * 保存单词统计
+             * @param {Object} stats - 统计对象
+             */
+            saveWordStats(stats) {
+                localStorage.setItem(this.KEY_WORD_STATS, JSON.stringify(stats));
+            }
+
+            /**
+             * 获取单词统计
+             * @returns {Object} 统计对象
+             */
+            getWordStats() {
+                const data = localStorage.getItem(this.KEY_WORD_STATS);
+                return data ? JSON.parse(data) : {};
+            }
+
+            /**
+             * 保存启用单词
+             * @param {Object} enabled - 启用状态对象
+             */
+            saveEnabledWords(enabled) {
+                localStorage.setItem(this.KEY_ENABLED_WORDS, JSON.stringify(enabled));
+            }
+
+            /**
+             * 获取启用单词
+             * @returns {Object} 启用状态对象
+             */
+            getEnabledWords() {
+                const data = localStorage.getItem(this.KEY_ENABLED_WORDS);
+                return data ? JSON.parse(data) : {};
+            }
+
+            /**
+             * 保存学习模式
+             * @param {string} mode - 学习模式 'cn2en' 或 'en2cn'
+             */
+            saveLearningMode(mode) {
+                localStorage.setItem(this.KEY_LEARNING_MODE, mode);
+            }
+
+            /**
+             * 获取学习模式
+             * @returns {string} 学习模式
+             */
+            getLearningMode() {
+                return localStorage.getItem(this.KEY_LEARNING_MODE) || 'cn2en';
+            }
+
+            /**
              * 清除所有数据
              */
             clearAll() {
                 localStorage.removeItem(this.KEY_WORDS);
                 localStorage.removeItem(this.KEY_LEARNED);
                 localStorage.removeItem(this.KEY_FILE_NAME);
+                localStorage.removeItem(this.KEY_WORD_STATS);
+                localStorage.removeItem(this.KEY_ENABLED_WORDS);
             }
 
             /**
@@ -763,7 +1018,8 @@
                 this.pages = {
                     home: document.getElementById('homePage'),
                     study: document.getElementById('studyPage'),
-                    complete: document.getElementById('completePage')
+                    complete: document.getElementById('completePage'),
+                    manage: document.getElementById('managePage')
                 };
                 this.currentPage = 'home';
             }
@@ -917,6 +1173,9 @@
                 
                 this.words = []; // { english: string, chinese: string }
                 this.learnedWords = {}; // { english: true }
+                this.enabledWords = {}; // { english: true }
+                this.wordStats = {}; // { english: { correct: 0, wrong: 0, learned: false } }
+                this.learningMode = 'cn2en'; // 'cn2en' 或 'en2cn'
                 this.currentOrder = 'normal';
                 this.studyQueue = []; // { english: string, chinese: string, wrongCount: number, completed: boolean }
                 this.originalStudyList = []; // 保存原始学习列表，用于标记已学习
@@ -950,6 +1209,11 @@
                 // 清除文件
                 document.getElementById('clearFileBtn').addEventListener('click', () => this.clearFile());
 
+                // 学习模式选择
+                document.querySelectorAll('[data-mode]').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.selectMode(e.target));
+                });
+
                 // 顺序选择
                 document.querySelectorAll('[data-order]').forEach(btn => {
                     btn.addEventListener('click', (e) => this.selectOrder(e.target));
@@ -959,6 +1223,9 @@
                 document.getElementById('switchFileBtn').addEventListener('click', () => {
                     document.getElementById('fileInput').click();
                 });
+
+                // 管理单词
+                document.getElementById('manageBtn').addEventListener('click', () => this.goToManage());
 
                 // 开始学习
                 document.getElementById('startBtn').addEventListener('click', () => this.startStudy());
@@ -981,12 +1248,15 @@
                     if (e.key === 'Escape') {
                         if (this.pageManager.currentPage === 'study') {
                             this.goHome();
+                        } else if (this.pageManager.currentPage === 'manage') {
+                            this.goHome();
                         }
                     }
                 });
 
                 // 完成页面
                 document.getElementById('backHomeBtn').addEventListener('click', () => this.goHome());
+                document.getElementById('exportBtn').addEventListener('click', () => this.exportStats());
 
                 // 错误弹窗
                 document.getElementById('errorModalOk').addEventListener('click', () => {
@@ -1005,6 +1275,10 @@
                 document.getElementById('allCompleteNo').addEventListener('click', () => {
                     document.getElementById('allCompleteModal').classList.remove('show');
                 });
+
+                // 管理页面
+                document.getElementById('manageBackBtn').addEventListener('click', () => this.goHome());
+                document.getElementById('resetAllBtn').addEventListener('click', () => this.resetAllLearned());
             }
 
             /**
@@ -1017,6 +1291,18 @@
                 if (savedWords && savedWords.length > 0) {
                     this.words = savedWords;
                     this.learnedWords = this.storage.getLearned();
+                    this.enabledWords = this.storage.getEnabledWords();
+                    this.wordStats = this.storage.getWordStats();
+                    this.learningMode = this.storage.getLearningMode();
+                    
+                    // 恢复学习模式选择
+                    document.querySelectorAll('[data-mode]').forEach(btn => {
+                        btn.classList.remove('active');
+                        if (btn.dataset.mode === this.learningMode) {
+                            btn.classList.add('active');
+                        }
+                    });
+                    
                     this.showFileInfo(savedFileName || 'wordlist.txt', savedWords.length);
                     this.showSettings();
                 }
@@ -1060,6 +1346,8 @@
                         this.storage.saveFileName(file.name);
                         this.storage.saveLearned({});
                         this.learnedWords = {};
+                        this.enabledWords = this.storage.getEnabledWords(); // 新的启用状态
+                        this.wordStats = {};
                         this.showFileInfo(file.name, this.words.length);
                         this.showSettings();
                     } else {
@@ -1090,33 +1378,95 @@
                 this.storage.clearAll();
                 this.words = [];
                 this.learnedWords = {};
+                this.enabledWords = {};
+                this.wordStats = {};
                 document.getElementById('fileInfo').style.display = 'none';
                 document.getElementById('uploadArea').style.display = 'block';
+                document.getElementById('statsSection').style.display = 'none';
+                document.getElementById('modeSection').style.display = 'none';
                 document.getElementById('settingsSection').style.display = 'none';
                 document.getElementById('quantitySection').style.display = 'none';
                 document.getElementById('startSection').style.display = 'none';
             }
 
             /**
+             * 更新首页统计信息
+             */
+            updateHomeStats() {
+                const total = this.words.length;
+                const learned = Object.keys(this.learnedWords).length;
+                const unlearned = total - learned;
+                const enabled = Object.keys(this.enabledWords).filter(k => this.enabledWords[k]).length;
+                const disabled = total - enabled;
+
+                const statsGrid = document.getElementById('homeStatsGrid');
+                statsGrid.innerHTML = `
+                    <div class="stat-item">
+                        <div class="stat-item-value">${total}</div>
+                        <div class="stat-item-label">单词总数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-item-value">${learned}</div>
+                        <div class="stat-item-label">已学习</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-item-value">${unlearned}</div>
+                        <div class="stat-item-label">未学习</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-item-value">${enabled}</div>
+                        <div class="stat-item-label">已启用</div>
+                    </div>
+                `;
+            }
+
+            /**
              * 显示设置区域
              */
             showSettings() {
-                // 过滤掉已学习的单词（支持重复单词，通过索引检查）
-                const unlearnedWords = this.words.filter(word => !this.learnedWords[word.english]);
+                // 获取可用单词
+                const availableWords = this.getAvailableWords();
 
-                if (unlearnedWords.length === 0) {
+                if (availableWords.length === 0) {
                     document.getElementById('allCompleteModal').classList.add('show');
-                    return;
+                    document.getElementById('allCompleteModal').querySelector('.modal-text').textContent = 
+                        '当前启用的单词都已完成学习，是否重置所有单词？';
                 }
 
+                document.getElementById('statsSection').style.display = 'block';
+                document.getElementById('modeSection').style.display = 'block';
                 document.getElementById('settingsSection').style.display = 'block';
                 document.getElementById('quantitySection').style.display = 'block';
                 document.getElementById('startSection').style.display = 'block';
 
+                this.updateHomeStats();
+
                 // 设置数量输入的最大值
                 const quantityInput = document.getElementById('quantityInput');
-                quantityInput.max = unlearnedWords.length;
-                quantityInput.value = Math.min(10, unlearnedWords.length);
+                quantityInput.max = availableWords.length;
+                quantityInput.value = Math.min(10, availableWords.length);
+            }
+
+            /**
+             * 获取可用的单词（启用且未学习）
+             */
+            getAvailableWords() {
+                return this.words.filter(word => {
+                    const isEnabled = this.enabledWords[word.english] !== false; // 默认启用
+                    const isNotLearned = !this.learnedWords[word.english];
+                    return isEnabled && isNotLearned;
+                });
+            }
+
+            /**
+             * 选择学习模式
+             * @param {HTMLElement} btn - 按钮元素
+             */
+            selectMode(btn) {
+                document.querySelectorAll('[data-mode]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                this.learningMode = btn.dataset.mode;
+                this.storage.saveLearningMode(this.learningMode);
             }
 
             /**
@@ -1130,19 +1480,40 @@
             }
 
             /**
+             * 获取问题内容
+             * @param {Object} word - 单词对象
+             */
+            getQuestion(word) {
+                return this.learningMode === 'cn2en' ? word.chinese : word.english;
+            }
+
+            /**
+             * 获取答案内容
+             * @param {Object} word - 单词对象
+             */
+            getAnswer(word) {
+                return this.learningMode === 'cn2en' ? word.english : word.chinese;
+            }
+
+            /**
              * 开始学习
              */
             startStudy() {
-                // 获取未学习的单词
-                const unlearnedWords = this.words.filter(word => !this.learnedWords[word.english]);
+                // 获取可用的单词
+                const availableWords = this.getAvailableWords();
+                
+                if (availableWords.length === 0) {
+                    document.getElementById('allCompleteModal').classList.add('show');
+                    return;
+                }
                 
                 // 获取学习数量
                 const quantityInput = document.getElementById('quantityInput');
                 let quantity = parseInt(quantityInput.value) || 10;
-                quantity = Math.max(1, Math.min(quantity, unlearnedWords.length));
+                quantity = Math.max(1, Math.min(quantity, availableWords.length));
 
                 // 准备学习队列
-                let studyWords = unlearnedWords.slice(0, quantity);
+                let studyWords = availableWords.slice(0, quantity);
 
                 // 按顺序排列
                 if (this.currentOrder === 'reverse') {
@@ -1199,13 +1570,18 @@
                 document.getElementById('progressText').textContent = `${completedCount + 1} / ${total}`;
                 document.getElementById('progressFill').style.width = `${(completedCount / total) * 100}%`;
 
-                // 显示中文
-                document.getElementById('chineseDisplay').textContent = current.chinese;
+                // 显示问题
+                const question = this.getQuestion(current);
+                const answer = this.getAnswer(current);
+                
+                document.getElementById('chineseDisplay').textContent = question;
                 document.getElementById('englishDisplay').classList.remove('show');
                 document.getElementById('englishDisplay').textContent = '';
 
-                // 重置输入框
+                // 更新输入框提示
                 const studyInput = document.getElementById('studyInput');
+                studyInput.placeholder = this.learningMode === 'cn2en' ? 
+                    '请输入英文单词或词组' : '请输入中文';
                 studyInput.value = '';
                 studyInput.disabled = false;
                 studyInput.focus();
@@ -1222,9 +1598,24 @@
                 const studyInput = document.getElementById('studyInput');
                 const userInput = studyInput.value.trim();
                 const current = this.studyQueue[this.currentIndex];
+                const correctAnswer = this.getAnswer(current);
 
-                if (Utils.compareWords(userInput, current.english)) {
-                    // 正确
+                let isCorrect = false;
+                if (this.learningMode === 'cn2en') {
+                    // 英文输入不区分大小写
+                    isCorrect = Utils.compareWords(userInput, correctAnswer);
+                } else {
+                    // 中文输入精确匹配
+                    isCorrect = userInput === correctAnswer;
+                }
+
+                if (isCorrect) {
+                    // 正确 - 更新统计
+                    if (!this.wordStats[current.english]) {
+                        this.wordStats[current.english] = { correct: 0, wrong: 0, learned: false };
+                    }
+                    this.wordStats[current.english].correct++;
+                    
                     current.completed = true;
                     this.currentIndex++;
                     this.showCurrentWord();
@@ -1241,9 +1632,10 @@
              */
             handleDontKnow() {
                 const current = this.studyQueue[this.currentIndex];
+                const answer = this.getAnswer(current);
                 
-                // 显示英文
-                document.getElementById('englishDisplay').textContent = current.english;
+                // 显示答案
+                document.getElementById('englishDisplay').textContent = answer;
                 document.getElementById('englishDisplay').classList.add('show');
 
                 // 禁用输入框
@@ -1290,6 +1682,12 @@
                 current.wrongCount++;
                 this.totalErrors++;
 
+                // 更新全局统计
+                if (!this.wordStats[current.english]) {
+                    this.wordStats[current.english] = { correct: 0, wrong: 0, learned: false };
+                }
+                this.wordStats[current.english].wrong++;
+
                 // 记录到错误统计
                 if (!this.errorStats[current.english]) {
                     this.errorStats[current.english] = {
@@ -1310,6 +1708,7 @@
                     this.learnedWords[item.english] = true;
                 });
                 this.storage.saveLearned(this.learnedWords);
+                this.storage.saveWordStats(this.wordStats);
 
                 // 显示完成页面
                 document.getElementById('totalLearned').textContent = this.totalLearned;
@@ -1324,15 +1723,21 @@
                     errorTableSection.style.display = 'block';
                     errorTableBody.innerHTML = '';
 
-                    // 按错误次数降序排列
-                    const sortedErrors = Object.values(this.errorStats).sort((a, b) => b.count - a.count);
+                    // 按累计错误次数降序排列
+                    const sortedErrors = Object.values(this.errorStats).sort((a, b) => {
+                        const aTotal = (this.wordStats[a.english]?.wrong || 0);
+                        const bTotal = (this.wordStats[b.english]?.wrong || 0);
+                        return bTotal - aTotal;
+                    });
 
                     sortedErrors.forEach(item => {
+                        const totalWrong = this.wordStats[item.english]?.wrong || 0;
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>${item.english}</td>
                             <td>${item.chinese}</td>
                             <td>${item.count}</td>
+                            <td>${totalWrong}</td>
                         `;
                         errorTableBody.appendChild(row);
                     });
@@ -1341,6 +1746,128 @@
                 }
 
                 this.pageManager.switchTo('complete');
+            }
+
+            /**
+             * 导出学习记录
+             */
+            exportStats() {
+                let csvContent = 'English,Chinese,Learned,Correct,Wrong\n';
+                
+                this.words.forEach(word => {
+                    const stat = this.wordStats[word.english] || { correct: 0, wrong: 0 };
+                    const learned = this.learnedWords[word.english] ? 'Yes' : 'No';
+                    // 处理逗号
+                    const english = word.english.replace(/"/g, '""');
+                    const chinese = word.chinese.replace(/"/g, '""');
+                    csvContent += `"${english}","${chinese}",${learned},${stat.correct || 0},${stat.wrong || 0}\n`;
+                });
+
+                // 创建下载链接，UTF-8 with BOM for Excel
+                const BOM = '\uFEFF';
+                const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'WordLearningHistory.csv');
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+
+            /**
+             * 跳转到管理页面
+             */
+            goToManage() {
+                this.pageManager.switchTo('manage');
+                setTimeout(() => {
+                    this.renderWordTable();
+                }, 450);
+            }
+
+            /**
+             * 渲染单词表格
+             */
+            renderWordTable() {
+                const tableBody = document.getElementById('wordTableBody');
+                tableBody.innerHTML = '';
+
+                this.words.forEach((word, index) => {
+                    const isEnabled = this.enabledWords[word.english] !== false;
+                    const isLearned = this.learnedWords[word.english];
+                    const stats = this.wordStats[word.english] || { correct: 0, wrong: 0 };
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="checkbox-cell">
+                            <input type="checkbox" ${isEnabled ? 'checked' : ''} data-index="${index}">
+                        </td>
+                        <td>${word.english}</td>
+                        <td>${word.chinese}</td>
+                        <td>
+                            <span class="status-badge ${isLearned ? 'status-learned' : 'status-unlearned'}">
+                                ${isLearned ? '✓ 已学习' : '○ 未学习'}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-small" data-reset="${index}">重置</button>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+                // 绑定复选框事件
+                tableBody.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.addEventListener('change', (e) => {
+                        const index = parseInt(e.target.dataset.index);
+                        const word = this.words[index];
+                        this.enabledWords[word.english] = e.target.checked;
+                        this.storage.saveEnabledWords(this.enabledWords);
+                    });
+                });
+
+                // 绑定重置按钮事件
+                tableBody.querySelectorAll('[data-reset]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.dataset.reset);
+                        const word = this.words[index];
+                        this.resetWord(word.english);
+                        this.renderWordTable();
+                    });
+                });
+            }
+
+            /**
+             * 重置单个单词
+             * @param {string} english - 英文单词
+             */
+            resetWord(english) {
+                delete this.learnedWords[english];
+                this.storage.saveLearned(this.learnedWords);
+                // 同时更新 wordStats
+                if (this.wordStats[english]) {
+                    this.wordStats[english].learned = false;
+                }
+                this.storage.saveWordStats(this.wordStats);
+            }
+
+            /**
+             * 重置所有单词
+             */
+            resetAllLearned() {
+                if (confirm('确定要将所有单词设为未学习吗？')) {
+                    this.learnedWords = {};
+                    this.storage.saveLearned(this.learnedWords);
+                    // 更新 wordStats
+                    Object.keys(this.wordStats).forEach(key => {
+                        this.wordStats[key].learned = false;
+                    });
+                    this.storage.saveWordStats(this.wordStats);
+                    this.renderWordTable();
+                }
             }
 
             /**
