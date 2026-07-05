@@ -1616,6 +1616,13 @@
                     }
                     this.wordStats[current.english].correct++;
                     
+                    //07-05-22-06更新解决输错单词不重默bug
+                    if (current.needReview) {
+                        current.needReview = false;
+                        this.handleConfirmKnow();
+                        return;
+                    }
+
                     current.completed = true;
                     this.currentIndex++;
                     this.showCurrentWord();
@@ -1678,6 +1685,8 @@
              * @param {Object} current - 当前单词对象
              */
             recordError(current) {
+                current.needReview = true; //07-05-22-06更新解决输错单词不重默bug
+
                 // 增加错误计数
                 current.wrongCount++;
                 this.totalErrors++;
